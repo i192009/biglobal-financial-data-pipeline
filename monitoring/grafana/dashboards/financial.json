@@ -1,0 +1,490 @@
+{
+  "uid": "biglobal-financial",
+  "title": "BI Global Brokers | Financial Data Operations",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "timezone": "utc",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "tags": [
+    "financial",
+    "cdc",
+    "synthetic"
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Executions processed and volume by currency (minor units)",
+      "type": "table",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "warehouse"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT currency,sum(executions) AS executions,sum(trade_volume_minor) AS volume_minor,sum(fees_minor) AS fees_minor FROM analytics.mart_daily_trading_summary GROUP BY 1",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Awaiting data / run dbt build"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "title": "Realized and unrealized P&L by currency (minor units)",
+      "type": "table",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "warehouse"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT currency,sum(realized_pnl_minor) AS realized_pnl_minor,sum(unrealized_pnl_minor) AS unrealized_pnl_minor,sum(missing_prices) AS missing_prices FROM analytics.mart_account_profitability GROUP BY 1",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Awaiting data / run dbt build"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "title": "Account cash balances (minor units)",
+      "type": "table",
+      "gridPos": {
+        "x": 0,
+        "y": 7,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "warehouse"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT account_id,currency,ledger_cash_minor FROM analytics.int_reconciliation_inputs ORDER BY 1 LIMIT 100",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Awaiting data / run dbt build"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "title": "Recent executions",
+      "type": "table",
+      "gridPos": {
+        "x": 12,
+        "y": 7,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "warehouse"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT occurred_at,execution_ref,account_id,side,quantity,notional_minor,currency,reversed FROM analytics.fct_trade_executions ORDER BY sequence_id DESC LIMIT 30",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Awaiting data / run dbt build"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 5,
+      "title": "CDC records persisted / second",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "rate(cdc_events_consumed_total{job=\"cdc-consumer\"}[1m])",
+          "legendFormat": "CDC records persisted / second"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Telemetry unavailable"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 6,
+      "title": "Kafka committed consumer lag",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 14,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "kafka_consumer_lag < 9223372036854775808",
+          "legendFormat": "Kafka committed consumer lag"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Telemetry unavailable"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 7,
+      "title": "Connector available (1 = running)",
+      "type": "stat",
+      "gridPos": {
+        "x": 0,
+        "y": 21,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "cdc_connector_available",
+          "legendFormat": "Connector available (1 = running)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Telemetry unavailable"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 8,
+      "title": "Quarantined records",
+      "type": "stat",
+      "gridPos": {
+        "x": 12,
+        "y": 21,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "cdc_dead_letter_count",
+          "legendFormat": "Quarantined records"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Telemetry unavailable"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 9,
+      "title": "Last ingestion age (seconds; quiet sources also age)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 28,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "analytics_freshness_seconds",
+          "legendFormat": "Last ingestion age (seconds; quiet sources also age)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Telemetry unavailable"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 10,
+      "title": "Latest dbt success (1 = pass)",
+      "type": "stat",
+      "gridPos": {
+        "x": 12,
+        "y": 28,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "dbt_last_run_success",
+          "legendFormat": "Latest dbt success (1 = pass)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Telemetry unavailable"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 11,
+      "title": "Replication latency p95 / seconds",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 35,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95,sum by(le)(rate(cdc_replication_latency_seconds_bucket[5m])))",
+          "legendFormat": "Replication latency p95 / seconds"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Telemetry unavailable"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 12,
+      "title": "Source DB transaction p95 / seconds",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 35,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95,sum by(le)(rate(source_database_transaction_seconds_bucket[5m])))",
+          "legendFormat": "Source DB transaction p95 / seconds"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Telemetry unavailable"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 13,
+      "title": "Latest reconciliation status",
+      "type": "table",
+      "gridPos": {
+        "x": 0,
+        "y": 42,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "warehouse"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT status,count(*) AS checks FROM operations.reconciliation_results WHERE run_id=(SELECT run_id FROM operations.reconciliation_results ORDER BY created_at DESC LIMIT 1) GROUP BY 1",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Awaiting data / run dbt build"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 14,
+      "title": "Financial discrepancy history (retained across retries)",
+      "type": "table",
+      "gridPos": {
+        "x": 12,
+        "y": 42,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "warehouse"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT created_at,run_id,rule_id,status,expected::text,observed::text,difference::text,related_ids::text FROM operations.reconciliation_results WHERE status<>'PASS' ORDER BY created_at DESC LIMIT 100",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Awaiting data / run dbt build"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 15,
+      "title": "dbt model results",
+      "type": "table",
+      "gridPos": {
+        "x": 0,
+        "y": 49,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "warehouse"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT r.created_at,model->>'unique_id' AS model,model->>'status' AS status,model->>'execution_time' AS execution_seconds FROM operations.dbt_runs r CROSS JOIN LATERAL jsonb_array_elements(r.results->'results') model ORDER BY r.created_at DESC LIMIT 100",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Awaiting data / run dbt build"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 16,
+      "title": "Positions and timestamped synthetic prices",
+      "type": "table",
+      "gridPos": {
+        "x": 12,
+        "y": 49,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "warehouse"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawSql": "SELECT account_id,instrument_id,currency,holding_quantity,cost_minor,price_minor,price_timestamp,market_value_minor,missing_price,stale_price FROM analytics.mart_portfolio_exposure ORDER BY 1 LIMIT 100",
+          "format": "table",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Awaiting data / run dbt build"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 17,
+      "title": "Data lineage and interpretation",
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 56,
+        "w": 24,
+        "h": 6
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "**Synthetic financial analytics** \u2014 refreshes every 10 seconds. Business tables update when dbt runs; ingestion is continuous.\n\n`trading.executions` \u2192 PostgreSQL WAL \u2192 `biglobal.trading.executions` (3 keyed partitions) \u2192 Go validation / durable upsert \u2192 `raw.raw_executions` + `raw.raw_cdc_events` \u2192 `stg_executions` \u2192 `int_cost_basis` \u2192 P&L facts \u2192 profitability and exposure marts.\n\n`trading.account_transactions` \u2192 CDC \u2192 `raw.raw_account_transactions` \u2192 cash movement models \u2192 account balances / cash flows. Python compares independent source and analytics snapshots and retains discrepancy evidence.\n\nValues are in **minor currency units**, currencies stay separate. Missing prices yield NULL P&L. No FX conversion. Initial empty or failed SQL panels require **dbt build**; unavailable metrics remain unavailable."
+      }
+    }
+  ]
+}

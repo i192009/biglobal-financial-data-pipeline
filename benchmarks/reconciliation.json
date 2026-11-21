@@ -1,0 +1,474 @@
+{
+  "run_id": "2ddd14d1-649a-4fb6-8965-e238396efc18",
+  "created_at": "2026-11-21 16:21:41.505419+00:00",
+  "checks": [
+    {
+      "rule_id": "count.customers",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 273,
+      "observed": 273,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.customers",
+        "analytics_table": "raw.raw_customers"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.accounts",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 273,
+      "observed": 273,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.accounts",
+        "analytics_table": "raw.raw_accounts"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.account_balances",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 273,
+      "observed": 273,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.account_balances",
+        "analytics_table": "raw.raw_account_balances"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.instruments",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 44,
+      "observed": 44,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.instruments",
+        "analytics_table": "raw.raw_instruments"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.orders",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 47089,
+      "observed": 47089,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.orders",
+        "analytics_table": "raw.raw_orders"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.executions",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 47911,
+      "observed": 47911,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.executions",
+        "analytics_table": "raw.raw_executions"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.account_transactions",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 55200,
+      "observed": 55200,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.account_transactions",
+        "analytics_table": "raw.raw_account_transactions"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.deposits",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 2901,
+      "observed": 2901,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.deposits",
+        "analytics_table": "raw.raw_deposits"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.withdrawals",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 2596,
+      "observed": 2596,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.withdrawals",
+        "analytics_table": "raw.raw_withdrawals"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.fees",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 47911,
+      "observed": 47911,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.fees",
+        "analytics_table": "raw.raw_fees"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.positions",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 533,
+      "observed": 533,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.positions",
+        "analytics_table": "raw.raw_positions"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.position_movements",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 49703,
+      "observed": 49703,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.position_movements",
+        "analytics_table": "raw.raw_position_movements"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.price_snapshots",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 42,
+      "observed": 42,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.price_snapshots",
+        "analytics_table": "raw.raw_price_snapshots"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "count.audit_events",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 101827,
+      "observed": 101827,
+      "difference": 0,
+      "source_evidence": {
+        "source_table": "trading.audit_events",
+        "analytics_table": "raw.raw_audit_events"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "duplicate_executions",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {},
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "missing_executions",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {},
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "unexpected_executions",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {},
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "execution_record_consistency",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "columns": [
+          "id",
+          "account_id",
+          "instrument_id",
+          "order_id",
+          "execution_ref",
+          "quantity",
+          "price_minor",
+          "notional_minor",
+          "fee_minor",
+          "side",
+          "currency",
+          "reversed"
+        ],
+        "method": "sorted streaming comparison by UUID"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "monetary_totals.account_transactions",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": [
+        {
+          "currency": "USD",
+          "total": "263999759794026"
+        }
+      ],
+      "observed": [
+        {
+          "currency": "USD",
+          "total": "263999759794026"
+        }
+      ],
+      "difference": {
+        "USD": "0"
+      },
+      "source_evidence": {
+        "units": "minor",
+        "grouping": "currency"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "monetary_totals.fees",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": [
+        {
+          "currency": "USD",
+          "total": "480330"
+        }
+      ],
+      "observed": [
+        {
+          "currency": "USD",
+          "total": "480330"
+        }
+      ],
+      "difference": {
+        "USD": "0"
+      },
+      "source_evidence": {
+        "units": "minor",
+        "grouping": "currency"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "monetary_totals.executions",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": [
+        {
+          "currency": "USD",
+          "total": "2755868049"
+        }
+      ],
+      "observed": [
+        {
+          "currency": "USD",
+          "total": "2755868049"
+        }
+      ],
+      "difference": {
+        "USD": "0"
+      },
+      "source_evidence": {
+        "units": "minor",
+        "grouping": "currency"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "cash_movements",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT b.id FROM check_account_balances b LEFT JOIN (\n                SELECT data->>'account_id' AS account_id,sum((data->>'amount_minor')::numeric) AS amount\n                FROM check_account_transactions GROUP BY 1) t ON t.account_id=b.id\n                WHERE (b.data->>'cash_minor')::numeric<>coalesce(t.amount,0)"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "unexpected_negative_balances",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT id FROM check_account_balances WHERE (data->>'cash_minor')::numeric<0"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "invalid_transaction_sequence",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT id FROM (\n                SELECT id,sum((data->>'amount_minor')::numeric) OVER(\n                PARTITION BY data->>'account_id' ORDER BY (data->>'sequence_id')::bigint) AS balance\n                FROM check_account_transactions) t WHERE balance<0"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "position_movements",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT p.id FROM check_positions p LEFT JOIN (\n                SELECT data->>'account_id' AS account_id,data->>'instrument_id' AS instrument_id,\n                sum((data->>'quantity')::numeric) AS quantity FROM check_position_movements GROUP BY 1,2\n                ) m ON m.account_id=p.data->>'account_id' AND m.instrument_id=p.data->>'instrument_id'\n                WHERE (p.data->>'quantity')::numeric<>coalesce(m.quantity,0)"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "execution_positions",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT p.id FROM check_positions p LEFT JOIN (\n                SELECT data->>'account_id' AS account_id,data->>'instrument_id' AS instrument_id,\n                sum((data->>'quantity')::numeric*CASE data->>'side' WHEN 'buy' THEN 1 ELSE -1 END) AS quantity\n                FROM check_executions WHERE NOT (data->>'reversed')::boolean GROUP BY 1,2\n                ) m ON m.account_id=p.data->>'account_id' AND m.instrument_id=p.data->>'instrument_id'\n                WHERE (p.data->>'quantity')::numeric<>coalesce(m.quantity,0)"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "fee_consistency",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT e.id FROM check_executions e LEFT JOIN check_fees f\n                ON f.data->>'execution_id'=e.id WHERE f.id IS NULL\n                OR f.data->>'amount_minor'<>e.data->>'fee_minor'\n                OR f.data->>'reversed'<>e.data->>'reversed'\n                OR f.data->>'currency'<>e.data->>'currency'"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "orphaned_records",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT e.id FROM check_executions e LEFT JOIN check_accounts a\n                ON a.id=e.data->>'account_id' LEFT JOIN check_orders o ON o.id=e.data->>'order_id'\n                LEFT JOIN check_instruments i ON i.id=e.data->>'instrument_id'\n                WHERE a.id IS NULL OR o.id IS NULL OR i.id IS NULL"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "reversal_handling",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT t.id FROM check_account_transactions t\n                LEFT JOIN check_account_transactions o ON o.id=t.data->>'reversal_of'\n                WHERE t.data->>'kind'='reversal' AND (o.id IS NULL\n                OR (t.data->>'amount_minor')::numeric+(o.data->>'amount_minor')::numeric<>0\n                OR t.data->>'account_id'<>o.data->>'account_id')"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "invalid_financial_values",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT id FROM check_executions WHERE\n                data->>'side' NOT IN ('buy','sell') OR data->>'currency' NOT IN ('USD','GBP','EUR')\n                OR (data->>'quantity')::numeric<=0 OR (data->>'price_minor')::numeric<=0\n                OR (data->>'notional_minor')::numeric<>(data->>'quantity')::numeric*(data->>'price_minor')::numeric\n                OR (data->>'fee_minor')::numeric<0 OR (data->>'occurred_at')::timestamptz<'2000-01-01'\n                OR (data->>'occurred_at')::timestamptz>now()+interval '1 day'"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "deposits_consistency",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT d.id FROM check_deposits d\n                LEFT JOIN check_account_transactions t ON t.id=d.data->>'transaction_id'\n                WHERE t.id IS NULL OR (t.data->>'amount_minor')::numeric<>\n                1*(d.data->>'amount_minor')::numeric\n                OR t.data->>'account_id'<>d.data->>'account_id'"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "withdrawals_consistency",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {
+        "sql": "SELECT d.id FROM check_withdrawals d\n                LEFT JOIN check_account_transactions t ON t.id=d.data->>'transaction_id'\n                WHERE t.id IS NULL OR (t.data->>'amount_minor')::numeric<>\n                -1*(d.data->>'amount_minor')::numeric\n                OR t.data->>'account_id'<>d.data->>'account_id'"
+      },
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "unresolved_poison_messages",
+      "severity": "critical",
+      "status": "PASS",
+      "expected": 0,
+      "observed": 0,
+      "difference": 0,
+      "source_evidence": {},
+      "related_record_ids": []
+    },
+    {
+      "rule_id": "analytics_data_freshness",
+      "severity": "warning",
+      "status": "WARNING",
+      "expected": false,
+      "observed": true,
+      "difference": 1,
+      "source_evidence": {
+        "age_seconds": "210.379184",
+        "quiet_source_can_also_age": true
+      },
+      "related_record_ids": []
+    }
+  ]
+}

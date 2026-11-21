@@ -1,0 +1,31 @@
+{
+ "name":"biglobal-source",
+ "config":{
+   "connector.class":"io.debezium.connector.postgresql.PostgresConnector",
+   "tasks.max":"1",
+   "database.hostname":"source-db",
+   "database.port":"5432",
+   "database.user":"cdc_user",
+   "database.password":"cdc-local",
+   "database.dbname":"source",
+   "topic.prefix":"biglobal",
+   "plugin.name":"pgoutput",
+   "slot.name":"biglobal_slot",
+   "publication.name":"biglobal_publication",
+   "publication.autocreate.mode":"disabled",
+   "schema.include.list":"trading",
+   "table.include.list":"trading.(customers|accounts|account_balances|instruments|orders|executions|account_transactions|deposits|withdrawals|fees|positions|position_movements|price_snapshots|audit_events)",
+   "snapshot.mode":"initial",
+   "provide.transaction.metadata":"true",
+   "tombstones.on.delete":"true",
+   "heartbeat.interval.ms":"5000",
+   "decimal.handling.mode":"string",
+   "time.precision.mode":"connect",
+   "key.converter":"org.apache.kafka.connect.json.JsonConverter",
+   "key.converter.schemas.enable":"true",
+   "value.converter":"org.apache.kafka.connect.json.JsonConverter",
+   "value.converter.schemas.enable":"true",
+   "topic.creation.default.replication.factor":"1",
+   "topic.creation.default.partitions":"3"
+ }
+}

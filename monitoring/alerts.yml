@@ -1,0 +1,21 @@
+groups:
+  - name: biglobal
+    rules:
+      - alert: CDCConnectorUnavailable
+        expr: cdc_connector_available == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: 'Debezium connector is unavailable'}
+      - alert: FinancialReconciliationFailed
+        expr: reconciliation_failures > 0
+        labels: {severity: critical}
+        annotations: {summary: 'Financial discrepancies require investigation'}
+      - alert: QuarantinedCDCRecords
+        expr: cdc_dead_letter_count > 0
+        labels: {severity: critical}
+        annotations: {summary: 'CDC poison records are quarantined'}
+      - alert: ConsumerUnavailable
+        expr: up{job="cdc-consumer"} == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: 'CDC consumer is unavailable'}

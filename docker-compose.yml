@@ -1,0 +1,152 @@
+name: biglobal-financial-data-pipeline
+x-app: &app
+  build: .
+  image: biglobal-platform:local
+  restart: unless-stopped
+  environment: &app-env
+    API_TOKEN: ${API_TOKEN:-local-synthetic-token}
+services:
+  source-db:
+    image: postgres:17-alpine
+    environment: {POSTGRES_USER: postgres, POSTGRES_PASSWORD: source-admin-local, POSTGRES_DB: source}
+    command: [postgres, -c, wal_level=logical, -c, max_replication_slots=10, -c, max_wal_senders=10, -c, max_slot_wal_keep_size=1024MB]
+    volumes: [source-data:/var/lib/postgresql/data, ./database/source:/docker-entrypoint-initdb.d:ro]
+    healthcheck: {test: [CMD-SHELL, 'pg_isready -U postgres -d source'], interval: 5s, timeout: 3s, retries: 30}
+    restart: unless-stopped
+  analytics-db:
+    image: postgres:17-alpine
+    environment: {POSTGRES_USER: postgres, POSTGRES_PASSWORD: analytics-admin-local, POSTGRES_DB: warehouse}
+    volumes: [analytics-data:/var/lib/postgresql/data, ./database/analytics:/docker-entrypoint-initdb.d:ro]
+    healthcheck: {test: [CMD-SHELL, 'pg_isready -U postgres -d warehouse'], interval: 5s, timeout: 3s, retries: 30}
+    restart: unless-stopped
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v26.2.7
+    command: [redpanda, start, --mode, dev-container, --smp, '1', --memory, 512M, --reserve-memory, 0M, --overprovisioned, --node-id, '0', --check=false, --kafka-addr, internal://0.0.0.0:9092, --advertise-kafka-addr, internal://redpanda:9092, --rpc-addr, 0.0.0.0:33145, --advertise-rpc-addr, redpanda:33145]
+    volumes: [broker-data:/var/lib/redpanda/data]
+    healthcheck: {test: [CMD, rpk, cluster, health, --exit-when-healthy], interval: 10s, timeout: 5s, retries: 30}
+    restart: unless-stopped
+  connect:
+    image: quay.io/debezium/connect:3.7.1.Final
+    environment:
+      BOOTSTRAP_SERVERS: redpanda:9092
+      GROUP_ID: biglobal-connect
+      CONFIG_STORAGE_TOPIC: connect_configs
+      OFFSET_STORAGE_TOPIC: connect_offsets
+      STATUS_STORAGE_TOPIC: connect_statuses
+      CONFIG_STORAGE_REPLICATION_FACTOR: '1'
+      OFFSET_STORAGE_REPLICATION_FACTOR: '1'
+      STATUS_STORAGE_REPLICATION_FACTOR: '1'
+      # A single local worker need not reserve departed workers' tasks for 5 min.
+      CONNECT_SCHEDULED_REBALANCE_MAX_DELAY_MS: '1000'
+      OFFSET_FLUSH_INTERVAL_MS: '1000'
+      KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: 'true'
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: 'true'
+      KAFKA_HEAP_OPTS: -Xms256m -Xmx768m
+    ports: ['127.0.0.1:8083:8083']
+    depends_on: {source-db: {condition: service_healthy}, redpanda: {condition: service_healthy}}
+    healthcheck: {test: [CMD-SHELL, 'curl -fsS http://localhost:8083/connectors >/dev/null'], interval: 10s, timeout: 5s, retries: 40}
+    restart: unless-stopped
+  cdc-init:
+    init: true
+    build: {context: ., dockerfile: reconciliation/Dockerfile}
+    image: biglobal-python:local
+    command: [python, /app/scripts/setup_cdc.py]
+    volumes: ['./debezium:/app/debezium:ro', './scripts:/app/scripts:ro']
+    depends_on: {connect: {condition: service_healthy}}
+  trading-api:
+    <<: *app
+    environment:
+      <<: *app-env
+      SOURCE_DSN: postgres://source_app:source-local@source-db:5432/source?sslmode=disable
+    command: [trading-api]
+    ports: ['127.0.0.1:8080:8080']
+    depends_on: {source-db: {condition: service_healthy}}
+    healthcheck: {test: [CMD, curl, -fsS, http://localhost:8080/healthz], interval: 10s, timeout: 3s, retries: 20}
+  cdc-consumer:
+    <<: *app
+    environment:
+      ANALYTICS_DSN: postgres://ingest_app:ingest-local@analytics-db:5432/warehouse?sslmode=disable
+      BROKERS: redpanda:9092
+    command: [cdc-consumer]
+    depends_on: {analytics-db: {condition: service_healthy}, cdc-init: {condition: service_completed_successfully}}
+    healthcheck: {test: [CMD, curl, -fsS, http://localhost:8081/healthz], interval: 10s, timeout: 5s, retries: 20}
+  analytics-api:
+    <<: *app
+    command: [analytics-api]
+    environment:
+      <<: *app-env
+      ANALYTICS_DSN: postgres://analytics_reader:analytics-local@analytics-db:5432/warehouse?sslmode=disable
+    ports: ['127.0.0.1:8082:8082']
+    depends_on: {analytics-db: {condition: service_healthy}}
+    healthcheck: {test: [CMD, curl, -fsS, http://localhost:8082/healthz], interval: 10s, timeout: 3s, retries: 20}
+  reconciliation:
+    init: true
+    user: '${LOCAL_UID:-0}:${LOCAL_GID:-0}'
+    build: {context: ., dockerfile: reconciliation/Dockerfile}
+    image: biglobal-python:local
+    command: [python, -m, reconciliation.service]
+    environment: &python-env
+      SOURCE_DSN: postgresql://source_reader:reader-local@source-db:5432/source
+      ANALYTICS_DSN: postgresql://reconcile_app:reconcile-local@analytics-db:5432/warehouse
+      DBT_DSN: postgresql://transform_app:transform-local@analytics-db:5432/warehouse
+    volumes: ['./benchmarks:/app/benchmarks', './dbt/financial_analytics:/app/dbt/financial_analytics']
+    depends_on: {source-db: {condition: service_healthy}, analytics-db: {condition: service_healthy}}
+    healthcheck: {test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8090/healthz')"], interval: 10s, timeout: 5s, retries: 20}
+    restart: unless-stopped
+  dbt:
+    init: true
+    user: '${LOCAL_UID:-0}:${LOCAL_GID:-0}'
+    image: biglobal-python:local
+    build: {context: ., dockerfile: reconciliation/Dockerfile}
+    command: [python, /app/scripts/run_dbt.py, build]
+    environment: *python-env
+    volumes: ['./dbt/financial_analytics:/app/dbt/financial_analytics']
+    depends_on: {analytics-db: {condition: service_healthy}}
+    profiles: [tools]
+  transform-scheduler:
+    init: true
+    user: '${LOCAL_UID:-0}:${LOCAL_GID:-0}'
+    image: biglobal-python:local
+    build: {context: ., dockerfile: reconciliation/Dockerfile}
+    command: [python, /app/scripts/dbt_daemon.py]
+    environment: *python-env
+    volumes: ['./dbt/financial_analytics:/app/dbt/financial_analytics']
+    depends_on: {analytics-db: {condition: service_healthy}, cdc-consumer: {condition: service_healthy}}
+    healthcheck: {test: [CMD, python, /app/scripts/check_dbt.py], interval: 15s, timeout: 8s, retries: 20, start_period: 60s}
+    restart: unless-stopped
+  generator:
+    <<: *app
+    command: [load-generator, -events, '${EVENTS:-1000}', -accounts, '10']
+    environment:
+      <<: *app-env
+      API_URL: http://trading-api:8080
+    depends_on: {trading-api: {condition: service_healthy}}
+    profiles: [tools]
+    restart: 'no'
+  prometheus:
+    image: prom/prometheus:v3.13.5
+    volumes: ['./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro', './monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro', prometheus-data:/prometheus]
+    ports: ['127.0.0.1:9090:9090']
+    healthcheck: {test: [CMD, wget, -q, -O, /dev/null, http://localhost:9090/-/ready], interval: 10s, timeout: 3s, retries: 20}
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:13.3.1
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-local-dashboard}
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_PLUGINS_PREINSTALL_DISABLED: 'true'
+      GF_ANALYTICS_CHECK_FOR_UPDATES: 'false'
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: 'false'
+    volumes: ['./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro', './monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro', grafana-data:/var/lib/grafana]
+    ports: ['127.0.0.1:3000:3000']
+    depends_on: {analytics-db: {condition: service_healthy}, prometheus: {condition: service_started}}
+    healthcheck: {test: [CMD, wget, -q, -O, /dev/null, http://localhost:3000/api/health], interval: 10s, timeout: 3s, retries: 20}
+    restart: unless-stopped
+volumes:
+  source-data:
+  analytics-data:
+  broker-data:
+  prometheus-data:
+  grafana-data:

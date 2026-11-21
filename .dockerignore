@@ -1,0 +1,10 @@
+.git
+.tools
+.env
+.pytest_cache
+.ruff_cache
+.venv
+**/__pycache__
+**/target
+**/logs
+bin

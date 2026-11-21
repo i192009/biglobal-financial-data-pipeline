@@ -1,0 +1,62 @@
+version: 2
+models:
+  - name: stg_accounts
+    description: Current synthetic account records captured from PostgreSQL WAL.
+    columns:
+      - name: id
+        data_tests: [unique, not_null]
+      - name: currency
+        data_tests:
+          - accepted_values: {arguments: {values: [USD, GBP, EUR]}}
+  - name: stg_executions
+    columns:
+      - name: id
+        data_tests: [unique, not_null]
+      - name: execution_ref
+        data_tests: [unique, not_null]
+      - name: account_id
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: "ref('stg_accounts')", field: id}}
+      - name: order_id
+        data_tests:
+          - relationships: {arguments: {to: "ref('stg_orders')", field: id}}
+      - name: side
+        data_tests:
+          - accepted_values: {arguments: {values: [buy, sell]}}
+  - name: fct_trade_executions
+    columns:
+      - name: id
+        data_tests: [unique, not_null]
+  - name: stg_fees
+    columns:
+      - name: execution_id
+        data_tests:
+          - unique
+          - relationships: {arguments: {to: "ref('stg_executions')", field: id}}
+unit_tests:
+  - name: exclude_reversed_executions
+    model: int_deduplicated_executions
+    given:
+      - input: ref('stg_executions')
+        rows:
+          - {id: a, reversed: false}
+          - {id: b, reversed: true}
+    expect:
+      rows:
+        - {id: a, reversed: false}
+  - name: weighted_average_partial_and_full_closure
+    model: int_cost_basis
+    given:
+      - input: ref('int_deduplicated_executions')
+        rows:
+          - {id: a, sequence_id: 1, account_id: account1, instrument_id: instrument1, side: buy, quantity: 10, notional_minor: 10000, fee_minor: 100}
+          - {id: b, sequence_id: 2, account_id: account1, instrument_id: instrument1, side: buy, quantity: 10, notional_minor: 20000, fee_minor: 100}
+          - {id: c, sequence_id: 3, account_id: account1, instrument_id: instrument1, side: sell, quantity: 5, notional_minor: 10000, fee_minor: 50}
+          - {id: d, sequence_id: 4, account_id: account1, instrument_id: instrument1, side: sell, quantity: 15, notional_minor: 30000, fee_minor: 50}
+    expect:
+      rows:
+        - {id: a, holding_quantity: 10, cost_minor: 10100, realized_pnl_minor: 0}
+        - {id: b, holding_quantity: 20, cost_minor: 30200, realized_pnl_minor: 0}
+        - {id: c, holding_quantity: 15, cost_minor: 22650, realized_pnl_minor: 2400}
+        - {id: d, holding_quantity: 0, cost_minor: 0, realized_pnl_minor: 7300}

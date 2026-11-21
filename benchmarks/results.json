@@ -1,0 +1,234 @@
+{
+  "status": "LOCAL_ACCEPTANCE_PASSED",
+  "date": "2026-11-21",
+  "recorded_at": "2026-11-21T16:34:25.750721+00:00",
+  "environment": {
+    "host": "Windows 11 ARM64",
+    "processor": "Snapdragon X X126100 (Qualcomm Oryon)",
+    "host_cores": 8,
+    "host_memory_bytes": 16758587392,
+    "NCPU": 8,
+    "MemTotal": 8106520576,
+    "Architecture": "aarch64",
+    "OperatingSystem": "Docker Desktop",
+    "ServerVersion": "29.9.3"
+  },
+  "versions": {
+    "go": "1.26.11",
+    "postgres_source": "17.12",
+    "postgres_analytics": "17.12",
+    "debezium": "3.7.1.Final",
+    "redpanda": "26.2.7",
+    "dbt_core": "1.11.17",
+    "dbt_postgres": "1.11.0"
+  },
+  "go": {
+    "build": "PASS",
+    "vet": "PASS",
+    "race_tests_with_real_source_and_analytics": "PASS",
+    "vulnerability_scan": "PASS; no vulnerabilities found"
+  },
+  "python": {
+    "pytest_passed": 3,
+    "ruff": "PASS"
+  },
+  "dbt": {
+    "results": 46,
+    "statuses": {
+      "success": 27,
+      "pass": 18,
+      "warn": 1
+    },
+    "warning": "Known synthetic prices from earlier test periods are stale; no substitute prices were generated.",
+    "source_freshness_passed": 14
+  },
+  "reconciliation": {
+    "run_id": "2ddd14d1-649a-4fb6-8965-e238396efc18",
+    "results": 34,
+    "statuses": {
+      "PASS": 33,
+      "WARNING": 1
+    },
+    "critical_checks": 33,
+    "critical_failures": 0
+  },
+  "source_to_warehouse": {
+    "exact_state_fingerprints_match": true,
+    "active_source_executions": 46119,
+    "active_mart_executions": 46119,
+    "audit_entity_reference_errors": 0,
+    "audit_metadata_repair": "Migration 002 applied and captured through real CDC; financial amounts unchanged."
+  },
+  "acceptance": {
+    "started_at": "2026-11-21T15:47:55.511621+00:00",
+    "status": "PASS",
+    "cdc": {
+      "initial_snapshot": true,
+      "insert_update_delete": "c,d,u",
+      "broker_envelopes_verified": true,
+      "tombstone_verified": true,
+      "probe_id": "95bf165c-dd2b-4487-bb9f-d928c235b77c"
+    },
+    "workload": {
+      "accounts": 20,
+      "completed_events": 10000,
+      "concurrency": 4,
+      "error": null,
+      "instruments": 2,
+      "requested_events": 10000,
+      "run_id": "2c19f7bc-dc78-46a6-a536-b391e7df7883",
+      "seed": 42,
+      "source_duration_seconds": 50.818788861,
+      "source_http_p50_ms": 7.699,
+      "source_http_p95_ms": 23.94,
+      "source_http_p99_ms": 61.676,
+      "source_http_requests": 19970,
+      "source_requests_per_second": 392.96489443347656
+    },
+    "post_source_convergence_seconds": 1.1527724000002308,
+    "discrepancy_run_id": "3a155204-83f6-4778-876f-9cc2a7b39545",
+    "requested_workload_events": 10000,
+    "new_execution_records": 9161,
+    "source_active_executions": 35286,
+    "analytics_active_executions": 35286,
+    "duplicate_prevention": true,
+    "missing_execution_detected": true,
+    "restart_totals_unchanged": true,
+    "prometheus_targets_reported": true,
+    "completed_at": "2026-11-21T15:50:51.580151+00:00"
+  },
+  "failure_scenarios": [
+    {
+      "scenario": "source-db_outage",
+      "status": "PASS",
+      "checkpoint_offset_sum_before": "363107",
+      "recovery_seconds": 20.173369000000093
+    },
+    {
+      "scenario": "connect_outage",
+      "status": "PASS",
+      "checkpoint_offset_sum_before": "364066",
+      "recovery_seconds": 3.321341400000165
+    },
+    {
+      "scenario": "redpanda_outage",
+      "status": "PASS",
+      "checkpoint_offset_sum_before": "365025",
+      "recovery_seconds": 3.2685175999999956
+    },
+    {
+      "scenario": "cdc-consumer_crash",
+      "status": "PASS",
+      "checkpoint_offset_sum_before": "366120",
+      "recovery_seconds": 20.377175000000534
+    },
+    {
+      "scenario": "analytics-db_outage",
+      "status": "PASS",
+      "checkpoint_offset_sum_before": "367079",
+      "recovery_seconds": 3.169335300000057
+    },
+    {
+      "scenario": "duplicate_original_cdc_record",
+      "status": "PASS",
+      "record_id": "fe08ea88-cf9d-4a1f-ac90-7993c44b8b19",
+      "original_coordinates": {
+        "lsn": 324223768,
+        "topic": "biglobal.trading.executions",
+        "offset": 13101,
+        "partition": 1
+      },
+      "replayed_offset": 13102
+    },
+    {
+      "scenario": "out_of_order_original_cdc_record",
+      "status": "PASS",
+      "record_id": "1ac4522c-c46c-4e21-9ba7-e042a54abeaa",
+      "original_coordinates": {
+        "lsn": 324249216,
+        "topic": "biglobal.trading.price_snapshots",
+        "offset": 23,
+        "partition": 1
+      },
+      "replayed_offset": 27
+    },
+    {
+      "scenario": "late_correction_historical_period",
+      "status": "PASS"
+    }
+  ],
+  "benchmark_targets": {
+    "1000": {
+      "status": "PASS",
+      "source_seconds": 9.71662334,
+      "source_http_requests": 2002,
+      "post_source_convergence_seconds": 2.362576700000318,
+      "replication_latency_seconds": {
+        "p50": 1.026591,
+        "p95": 1.4741858,
+        "p99": 1.63700064
+      },
+      "dbt_build_seconds": 42.79479899999933,
+      "dbt_input_execution_records": 38756,
+      "report": "1000.json"
+    },
+    "10000": {
+      "status": "PASS",
+      "source_seconds": 98.482564616,
+      "source_http_requests": 19948,
+      "post_source_convergence_seconds": 2.373967900000025,
+      "replication_latency_seconds": {
+        "p50": 0.907185,
+        "p95": 1.6387662999999988,
+        "p99": 2.2865315799999997
+      },
+      "dbt_build_seconds": 38.95959900000071,
+      "dbt_input_execution_records": 47911,
+      "report": "10000.json"
+    },
+    "100000": {
+      "status": "NOT_RUN"
+    },
+    "1000000": {
+      "status": "NOT_RUN"
+    }
+  },
+  "ci": {
+    "configured": true,
+    "remote_run": "Tracked separately in GitHub Actions; this report records local delivery validation.",
+    "workflow_runs_url": "https://github.com/i192009/biglobal-financial-data-pipeline/actions"
+  },
+  "dashboard": {
+    "url": "http://localhost:3000/d/biglobal-financial",
+    "screenshot": "docs/screenshots/financial-operations.png"
+  },
+  "limitations": [
+    "Large workload targets are supported by the CLI but unmeasured.",
+    "Benchmarks used an existing warm dataset on a shared Docker host; CPU/memory are samples, not peaks.",
+    "Arrival latency is measured at SQL insertion, before the batch commit may complete.",
+    "Single-node development deployment; cross-table reporting is eventually consistent."
+  ],
+  "startup": {
+    "repeated_compose_up": "PASS",
+    "unchanged_connector_registration": "PASS",
+    "healthy_services": {
+      "analytics-api": "healthy",
+      "analytics-db": "healthy",
+      "cdc-consumer": "healthy",
+      "connect": "healthy",
+      "grafana": "healthy",
+      "prometheus": "healthy",
+      "reconciliation": "healthy",
+      "redpanda": "healthy",
+      "source-db": "healthy",
+      "trading-api": "healthy",
+      "transform-scheduler": "healthy"
+    },
+    "unused_cross_database_credentials_absent": true
+  },
+  "repository": {
+    "full_name": "i192009/biglobal-financial-data-pipeline",
+    "url": "https://github.com/i192009/biglobal-financial-data-pipeline",
+    "visibility": "private"
+  }
+}

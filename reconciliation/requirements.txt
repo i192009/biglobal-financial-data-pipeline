@@ -1,0 +1,8 @@
+dbt-core==1.11.17
+dbt-postgres==1.11.0
+psycopg[binary]==3.3.9
+SQLAlchemy==2.1.9
+prometheus-client==0.26.0
+pytest==9.2.0
+ruff==0.17.6
+PyYAML==6.0.3

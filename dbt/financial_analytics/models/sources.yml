@@ -1,0 +1,32 @@
+version: 2
+sources:
+  - name: raw
+    schema: raw
+    config:
+      loaded_at_field: updated_at
+      freshness:
+        warn_after: {count: 15, period: minute}
+        error_after: {count: 60, period: minute}
+    tables:
+      - name: raw_accounts
+      - name: raw_orders
+      - name: raw_executions
+      - name: raw_account_transactions
+      - name: raw_deposits
+      - name: raw_withdrawals
+      - name: raw_fees
+      - name: raw_price_snapshots
+      - name: raw_positions
+      - name: raw_account_balances
+      - name: raw_position_movements
+      - name: raw_instruments
+      - name: raw_cdc_events
+        config: {loaded_at_field: ingested_at}
+      - name: processing_failures
+        config: {loaded_at_field: created_at, freshness: null}
+      - name: ingestion_checkpoints
+  - name: operations
+    schema: operations
+    tables:
+      - name: reconciliation_results
+      - name: dbt_runs

@@ -1,0 +1,13 @@
+financial_analytics:
+  target: local
+  outputs:
+    local:
+      type: postgres
+      host: analytics-db
+      port: 5432
+      user: transform_app
+      password: transform-local
+      dbname: warehouse
+      schema: analytics
+      threads: 4
+      connect_timeout: 10

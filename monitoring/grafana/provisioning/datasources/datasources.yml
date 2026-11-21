@@ -1,0 +1,19 @@
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+  - name: Financial Warehouse
+    uid: warehouse
+    type: postgres
+    url: analytics-db:5432
+    user: analytics_reader
+    secureJsonData: {password: analytics-local}
+    jsonData:
+      database: warehouse
+      sslmode: disable
+      postgresVersion: 1700
+      timescaledb: false

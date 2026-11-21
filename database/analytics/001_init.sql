@@ -1,0 +1,26 @@
+﻿CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE ROLE ingest_app LOGIN PASSWORD 'ingest-local';
+CREATE ROLE transform_app LOGIN PASSWORD 'transform-local';
+CREATE ROLE analytics_reader LOGIN PASSWORD 'analytics-local';
+CREATE ROLE reconcile_app LOGIN PASSWORD 'reconcile-local';
+CREATE SCHEMA raw AUTHORIZATION ingest_app;
+CREATE SCHEMA analytics AUTHORIZATION transform_app;
+CREATE SCHEMA operations AUTHORIZATION reconcile_app;
+CREATE TABLE raw.raw_cdc_events(topic text NOT NULL,partition_id integer NOT NULL,offset_id bigint NOT NULL,source_table text,record_id text,operation text,lsn numeric(30),source_ts timestamptz,envelope jsonb,ingested_at timestamptz NOT NULL DEFAULT clock_timestamp(),PRIMARY KEY(topic,partition_id,offset_id));
+CREATE INDEX ON raw.raw_cdc_events(source_table,record_id);
+CREATE INDEX ON raw.raw_cdc_events(ingested_at);
+DO $$ DECLARE name text; BEGIN FOREACH name IN ARRAY ARRAY['customers','accounts','account_balances','instruments','orders','executions','account_transactions','deposits','withdrawals','fees','positions','position_movements','price_snapshots','audit_events'] LOOP EXECUTE format('CREATE TABLE raw.raw_%I(id text PRIMARY KEY,data jsonb NOT NULL,lsn numeric(30) NOT NULL,source_order numeric(30) NOT NULL DEFAULT 0,source_ts timestamptz,deleted boolean NOT NULL DEFAULT false,updated_at timestamptz NOT NULL DEFAULT clock_timestamp())', name); END LOOP; END $$;
+CREATE TABLE raw.ingestion_checkpoints(topic text NOT NULL,partition_id integer NOT NULL,offset_id bigint NOT NULL,updated_at timestamptz NOT NULL DEFAULT clock_timestamp(),PRIMARY KEY(topic,partition_id));
+CREATE TABLE raw.processing_failures(topic text NOT NULL,partition_id integer NOT NULL,offset_id bigint NOT NULL,error text NOT NULL,payload bytea,record_key bytea,created_at timestamptz NOT NULL DEFAULT now(),resolved_at timestamptz,PRIMARY KEY(topic,partition_id,offset_id));
+CREATE TABLE operations.reconciliation_results(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),run_id uuid NOT NULL,rule_id text NOT NULL,status text NOT NULL CHECK(status IN ('PASS','FAIL','WARNING','INCONCLUSIVE')),severity text NOT NULL,expected jsonb,observed jsonb,difference jsonb,evidence jsonb NOT NULL,related_ids jsonb NOT NULL DEFAULT '[]',created_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX ON operations.reconciliation_results(run_id,rule_id);
+CREATE TABLE operations.dbt_runs(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),success boolean NOT NULL,results jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
+GRANT ALL ON ALL TABLES IN SCHEMA raw TO ingest_app;
+GRANT USAGE ON SCHEMA raw TO transform_app,analytics_reader,reconcile_app;
+GRANT SELECT ON ALL TABLES IN SCHEMA raw TO transform_app,analytics_reader,reconcile_app;
+GRANT USAGE ON SCHEMA analytics TO analytics_reader,reconcile_app;
+ALTER DEFAULT PRIVILEGES FOR ROLE transform_app IN SCHEMA analytics GRANT SELECT ON TABLES TO analytics_reader,reconcile_app;
+GRANT USAGE ON SCHEMA operations TO analytics_reader,transform_app;
+GRANT SELECT ON ALL TABLES IN SCHEMA operations TO analytics_reader,transform_app;
+GRANT ALL ON ALL TABLES IN SCHEMA operations TO reconcile_app;
+

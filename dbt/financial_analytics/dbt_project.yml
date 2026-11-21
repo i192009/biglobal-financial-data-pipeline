@@ -1,0 +1,16 @@
+name: financial_analytics
+version: '1.0.0'
+config-version: 2
+profile: financial_analytics
+model-paths: [models]
+test-paths: [tests]
+snapshot-paths: [snapshots]
+macro-paths: [macros]
+clean-targets: [target, dbt_packages]
+models:
+  financial_analytics:
+    +materialized: view
+    marts:
+      +materialized: table
+    facts:
+      +materialized: table

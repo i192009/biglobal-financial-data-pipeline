@@ -1,0 +1,58 @@
+{
+  "status": "PASS",
+  "created_at": "2026-11-21T16:16:19.725409+00:00",
+  "workload": {
+    "accounts": 40,
+    "completed_events": 1000,
+    "concurrency": 8,
+    "error": null,
+    "instruments": 2,
+    "requested_events": 1000,
+    "run_id": "00017a76-1fc8-421e-b79c-168d83d8fc22",
+    "seed": 42,
+    "source_duration_seconds": 9.71662334,
+    "source_http_p50_ms": 30.875,
+    "source_http_p95_ms": 84.753,
+    "source_http_p99_ms": 142.121,
+    "source_http_requests": 2002,
+    "source_requests_per_second": 206.0386545764776
+  },
+  "host": "Windows-11-10.0.26200-SP0",
+  "docker": {
+    "NCPU": 8,
+    "MemTotal": 8106520576,
+    "Architecture": "aarch64",
+    "OperatingSystem": "Docker Desktop",
+    "ServerVersion": "29.9.3"
+  },
+  "source_phase_seconds_including_startup": 13.03528230000029,
+  "post_source_convergence_seconds": 2.362576700000318,
+  "total_convergence_seconds": 15.397859000000608,
+  "dbt_build_seconds": 42.79479899999933,
+  "analytics_query_latency_ms": {
+    "p50": 2054.4536999996126,
+    "p95": 2086.037000000033,
+    "p99": 2230.7772999993176
+  },
+  "replication_latency_seconds": {
+    "p50": 1.026591,
+    "p95": 1.4741858,
+    "p99": 1.63700064
+  },
+  "replication_latency_definition": "SQL insertion timestamp minus Debezium source timestamp, for this workload only; batch commit may follow insertion.",
+  "new_cdc_history_records": 9293,
+  "consumer_records_per_second": 603.5254641570385,
+  "broker_bytes_per_second": 4153443.085821053,
+  "container_cpu_memory_sample": "{\"BlockIO\":\"10.8MB / 0B\",\"CPUPerc\":\"1.06%\",\"Container\":\"e50ca33dda27b60b5544bf5547c9c4ca5878025799e3fb5fc94745f88d906716\",\"ID\":\"e50ca33dda27\",\"MemPerc\":\"0.26%\",\"MemUsage\":\"20.26MiB / 7.55GiB\",\"Name\":\"biglobal-financial-data-pipeline-trading-api-1\",\"NetIO\":\"4.1MB / 7.49MB\",\"PIDs\":\"14\"}\n{\"BlockIO\":\"65.5kB / 0B\",\"CPUPerc\":\"0.00%\",\"Container\":\"c143ea789066acdf54bc54f2bca8b8de9b67bfb43543034e01a1140625b9396f\",\"ID\":\"c143ea789066\",\"MemPerc\":\"0.11%\",\"MemUsage\":\"8.863MiB / 7.55GiB\",\"Name\":\"biglobal-financial-data-pipeline-analytics-api-1\",\"NetIO\":\"11.5kB / 35.5kB\",\"PIDs\":\"11\"}\n{\"BlockIO\":\"1.18MB / 0B\",\"CPUPerc\":\"0.13%\",\"Container\":\"daf64b4d451ed6d026524f641f48a9697739d3a695d6fe608075645e630941ed\",\"ID\":\"daf64b4d451e\",\"MemPerc\":\"0.16%\",\"MemUsage\":\"12.27MiB / 7.55GiB\",\"Name\":\"biglobal-financial-data-pipeline-cdc-consumer-1\",\"NetIO\":\"438MB / 456MB\",\"PIDs\":\"15\"}\n{\"BlockIO\":\"119MB / 4.96MB\",\"CPUPerc\":\"2.01%\",\"Container\":\"6eb33675d624183f344d7cb6aceee89568ce8f2cbd1a9a4baa78021697e2633a\",\"ID\":\"6eb33675d624\",\"MemPerc\":\"11.90%\",\"MemUsage\":\"920.2MiB / 7.55GiB\",\"Name\":\"biglobal-financial-data-pipeline-connect-1\",\"NetIO\":\"57MB / 460MB\",\"PIDs\":\"67\"}\n{\"BlockIO\":\"454MB / 2.16GB\",\"CPUPerc\":\"82.07%\",\"Container\":\"663224e2156d4f951c74df66861fc2124943daed2e2f267d6569a4b77abee297\",\"ID\":\"663224e2156d\",\"MemPerc\":\"6.69%\",\"MemUsage\":\"517.5MiB / 7.55GiB\",\"Name\":\"biglobal-financial-data-pipeline-analytics-db-1\",\"NetIO\":\"462MB / 17.2MB\",\"PIDs\":\"14\"}\n{\"BlockIO\":\"70.6MB / 226MB\",\"CPUPerc\":\"0.18%\",\"Container\":\"f6cb3e6499b7662bd9cfec4398ae1972522125e7ad81e70bb6101eca90b62c98\",\"ID\":\"f6cb3e6499b7\",\"MemPerc\":\"2.15%\",\"MemUsage\":\"166.1MiB / 7.55GiB\",\"Name\":\"biglobal-financial-data-pipeline-source-db-1\",\"NetIO\":\"11.2MB / 68.1MB\",\"PIDs\":\"17\"}\n{\"BlockIO\":\"1.99GB / 27.7MB\",\"CPUPerc\":\"2.71%\",\"Container\":\"8e40558a6708f15c439d883257c132152cc7c05536aea251badd7c383558e408\",\"ID\":\"8e40558a6708\",\"MemPerc\":\"5.42%\",\"MemUsage\":\"419.1MiB / 7.55GiB\",\"Name\":\"biglobal-financial-data-pipeline-grafana-1\",\"NetIO\":\"430kB / 3.46MB\",\"PIDs\":\"165\"}\n{\"BlockIO\":\"255MB / 10.3MB\",\"CPUPerc\":\"0.76%\",\"Container\":\"2c0622b3791665304fbf5a80c9dc9c9f5a6c8513072dbe53d10fe46d67b63757\",\"ID\":\"2c0622b37916\",\"MemPerc\":\"0.89%\",\"MemUsage\":\"69.11MiB / 7.55GiB\",\"Name\":\"biglobal-financial-data-pipeline-prometheus-1\",\"NetIO\":\"129MB / 1.26MB\",\"PIDs\":\"13\"}\n{\"BlockIO\":\"3.43GB / 468MB\",\"CPUPerc\":\"1.75%\",\"Container\":\"b49c8410ecabbb5ef26c31fc16308f4312bc6c350b43c7c9b0f92c4af34520f8\",\"ID\":\"b49c8410ecab\",\"MemPerc\":\"6.36%\",\"MemUsage\":\"491.6MiB / 7.55GiB\",\"Name\":\"biglobal-financial-data-pipeline-redpanda-1\",\"NetIO\":\"455MB / 470MB\",\"PIDs\":\"3\"}\n",
+  "limitations": [
+    "Broker byte counters are sampled by Prometheus and can lag the convergence timestamp; missing samples remain null.",
+    "CPU/memory are samples taken at convergence, not peak measurements.",
+    "Initial instrument/account seeding contributes CDC records but is outside the generator HTTP timing.",
+    "Recovery timings are recorded separately by failure_tests.py."
+  ],
+  "dbt_input_execution_records": 38756,
+  "environment_notes": [
+    "The persistent stack includes earlier acceptance/fault fixtures; these are warm shared-host runs.",
+    "dbt_build_seconds includes container and CLI startup; per-model SQL durations are retained in operations.dbt_runs."
+  ]
+}

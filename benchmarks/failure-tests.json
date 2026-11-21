@@ -1,0 +1,63 @@
+{
+  "status": "PASS",
+  "results": [
+    {
+      "scenario": "source-db_outage",
+      "status": "PASS",
+      "checkpoint_offset_sum_before": "363107",
+      "recovery_seconds": 20.173369000000093
+    },
+    {
+      "scenario": "connect_outage",
+      "status": "PASS",
+      "checkpoint_offset_sum_before": "364066",
+      "recovery_seconds": 3.321341400000165
+    },
+    {
+      "scenario": "redpanda_outage",
+      "status": "PASS",
+      "checkpoint_offset_sum_before": "365025",
+      "recovery_seconds": 3.2685175999999956
+    },
+    {
+      "scenario": "cdc-consumer_crash",
+      "status": "PASS",
+      "checkpoint_offset_sum_before": "366120",
+      "recovery_seconds": 20.377175000000534
+    },
+    {
+      "scenario": "analytics-db_outage",
+      "status": "PASS",
+      "checkpoint_offset_sum_before": "367079",
+      "recovery_seconds": 3.169335300000057
+    },
+    {
+      "scenario": "duplicate_original_cdc_record",
+      "status": "PASS",
+      "record_id": "fe08ea88-cf9d-4a1f-ac90-7993c44b8b19",
+      "original_coordinates": {
+        "lsn": 324223768,
+        "topic": "biglobal.trading.executions",
+        "offset": 13101,
+        "partition": 1
+      },
+      "replayed_offset": 13102
+    },
+    {
+      "scenario": "out_of_order_original_cdc_record",
+      "status": "PASS",
+      "record_id": "1ac4522c-c46c-4e21-9ba7-e042a54abeaa",
+      "original_coordinates": {
+        "lsn": 324249216,
+        "topic": "biglobal.trading.price_snapshots",
+        "offset": 23,
+        "partition": 1
+      },
+      "replayed_offset": 27
+    },
+    {
+      "scenario": "late_correction_historical_period",
+      "status": "PASS"
+    }
+  ]
+}
